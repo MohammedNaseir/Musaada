@@ -1,7 +1,4 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import axios from 'axios';
-
-const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'https://localhost:7000/api';
 
 interface User {
   id: string;
@@ -25,7 +22,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Restore session from localStorage on page load
+    // Check if user is logged in
     const storedUser = localStorage.getItem('auth_user');
     if (storedUser) {
       setUser(JSON.parse(storedUser));
@@ -33,27 +30,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setLoading(false);
   }, []);
 
-  const login = async (email: string, password: string): Promise<void> => {
-    const response = await axios.post(
-      `${BASE_URL}/auth/login`,
-      { email, password },
-      { headers: { 'Content-Type': 'application/json' } }
-    );
-
-    const { token, user: loggedInUser } = response.data as {
-      token: string;
-      user: User;
-    };
-
-    // Persist token and user info
-    localStorage.setItem('auth_token', token);
-    localStorage.setItem('auth_user', JSON.stringify(loggedInUser));
-    setUser(loggedInUser);
+  const login = async (email: string, password: string) => {
+    // Mock authentication
+    return new Promise<void>((resolve, reject) => {
+      setTimeout(() => {
+        if (email === 'admin@system.com' && password === 'admin123') {
+          const loggedInUser: User = {
+            id: '1',
+            name: 'مدير النظام',
+            email: 'admin@system.com',
+            role: 'Admin'
+          };
+          setUser(loggedInUser);
+          localStorage.setItem('auth_user', JSON.stringify(loggedInUser));
+          resolve();
+        } else {
+          reject(new Error('البريد الإلكتروني أو كلمة المرور غير صحيحة'));
+        }
+      }, 800);
+    });
   };
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem('auth_token');
     localStorage.removeItem('auth_user');
   };
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { assistanceTypesService, sourcesService, assigneesService } from '../services';
 import { AssistanceType, Source, Assignee } from '../models/types';
 import { Plus, Trash2, CheckCircle2, XCircle, LayoutGrid, Building, UserCircle, X, Loader2 } from 'lucide-react';

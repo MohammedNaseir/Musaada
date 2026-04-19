@@ -45,7 +45,7 @@ export default function FamilyForm() {
         const fid = Number(id);
         const fData = await familiesService.getById(fid);
         if (fData) {
-          reset({ ...fData, assigneeId: fData.assigneeId ?? undefined });
+          reset({ ...fData, assigneeId: fData.assigneeId || '' });
         }
         const mData = await familyMembersService.getByFamilyId(fid);
         setMembers(mData as FamilyMember[]);
