@@ -36,12 +36,16 @@ export default function Allocations() {
 
   const loadData = async () => {
     setLoading(true);
-    const [allAllocations, allFamilies, allProjects] = await Promise.all([
+    const [allocationsResult, familiesResult, projectsResult] = await Promise.allSettled([
       familyProjectService.getAll(),
       familiesService.getAll(),
       projectsService.getAll()
     ]);
-    
+
+    const allAllocations = allocationsResult.status === 'fulfilled' ? allocationsResult.value : [];
+    const allFamilies = familiesResult.status === 'fulfilled' ? familiesResult.value : [];
+    const allProjects = projectsResult.status === 'fulfilled' ? projectsResult.value : [];
+
     setProjectsList(allProjects);
 
     const enriched = allAllocations.map(a => ({
@@ -49,7 +53,7 @@ export default function Allocations() {
       familyName: allFamilies.find(f => f.id === a.familyId)?.headFullName || 'غير معروف',
       projectName: allProjects.find(p => p.id === a.projectId)?.name || 'غير معروف'
     })).sort((a, b) => new Date(b.disbursementDate).getTime() - new Date(a.disbursementDate).getTime());
-    
+
     setAllocations(enriched);
     setLoading(false);
   };
@@ -273,7 +277,7 @@ export default function Allocations() {
                     <label className="block text-xs font-bold text-slate-700 ml-1">تحديد المشروع <span className="text-red-500">*</span></label>
                     <select {...dReg('projectId', { required: true })} className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 outline-none transition-all text-sm font-medium text-slate-800 appearance-none">
                        <option value="">-- اختر المشروع الأساسي --</option>
-                       {projectsList.filter(p => p.status === 'نشط' || p.status === 'مخطط له').map(p => (
+                       {projectsList.map(p => (
                          <option key={p.id} value={p.id}>{p.name}</option>
                        ))}
                     </select>

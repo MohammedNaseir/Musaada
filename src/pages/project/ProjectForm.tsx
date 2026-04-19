@@ -45,7 +45,8 @@ export default function ProjectForm() {
       const payload = {
         ...data,
         assistanceTypeId: Number(data.assistanceTypeId),
-        sourceId: Number(data.sourceId)
+        sourceId: Number(data.sourceId),
+        endDate: data.endDate || null
       };
 
       if (isEdit) {

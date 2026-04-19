@@ -1,63 +1,51 @@
-import { familiesMock } from './mock/familiesMock';
-import { familyMembersMock } from './mock/familyMembersMock';
-import { projectsMock } from './mock/projectsMock';
-import { familyProjectMock } from './mock/familyProjectMock';
-import { assistanceTypesMock, sourcesMock, assigneesMock } from './mock/settingsMock';
-
-/**
- * 💡 كيفية التحويل لباك إيند حقيقي (API Integration Preview):
- *
- * حالياً يتم استخدام البيانات الوهمية (Mock Data) باستخدام LocalStorage والذاكرة.
- * للربط بـ API حقيقي (مثل Express أو Laravel أو .NET)، كل ما عليك فعله هو 
- * استبدال مصدر هذه الثوابت أدناه بطلبات Axios أو Fetch.
- *
- * 📖 راجع ملف القراءة `backend-api-specs.md` في مجلد المشروع الرئيسي 
- * لمشاهدة كافة تفاصيل مسارات الـ API وأنواع البيانات (Endpoints & Payloads).
- */
+import { familiesApi } from './api/familiesApi';
+import { familyMembersApi } from './api/familyMembersApi';
+import { projectsApi } from './api/projectsApi';
+import { allocationsApi } from './api/allocationsApi';
+import { assistanceTypesApi, sourcesApi, assigneesApi } from './api/settingsApi';
 
 /**
  * خدمة بيانات العائلات (Families Data Service)
  * Endpoint: /api/families
  * Methods: GET, POST, PUT, DELETE
  */
-export const familiesService = familiesMock;
+export const familiesService = familiesApi;
 
 /**
  * خدمة بيانات أفراد العائلة (Family Members Data Service)
- * Endpoint: /api/members أو /api/families/:id/members
+ * Endpoint: /api/families/:id/members  |  /api/members/:id
  * Methods: GET, POST, PUT, DELETE
  */
-export const familyMembersService = familyMembersMock;
+export const familyMembersService = familyMembersApi;
 
 /**
  * خدمة بيانات المشاريع الإغاثية (Projects Data Service)
  * Endpoint: /api/projects
  * Methods: GET, POST, PUT, DELETE
  */
-export const projectsService = projectsMock;
+export const projectsService = projectsApi;
 
 /**
  * خدمة تخصيص المساعدات وربط العائلات بالمشاريع (Allocations Data Service)
- * Endpoint: /api/allocations أو /api/family-projects
+ * Endpoint: /api/allocations
  * Methods: GET, POST, PUT, DELETE
  */
-export const familyProjectService = familyProjectMock;
+export const familyProjectService = allocationsApi;
 
 /**
  * خدمة بيانات أنواع المساعدات (Assistance Types Lookup)
- * Endpoint: /api/settings/assistance-types
+ * Endpoint: /api/assistance-types
  */
-export const assistanceTypesService = assistanceTypesMock;
+export const assistanceTypesService = assistanceTypesApi;
 
 /**
  * خدمة بيانات الجهات المانحة والمصادر (Sources Lookup)
- * Endpoint: /api/settings/sources
+ * Endpoint: /api/sources
  */
-export const sourcesService = sourcesMock;
+export const sourcesService = sourcesApi;
 
 /**
  * خدمة بيانات الجهات المكلفة بالتوزيع (Assignees Lookup)
- * Endpoint: /api/settings/assignees
+ * Endpoint: /api/assignees
  */
-export const assigneesService = assigneesMock;
-
+export const assigneesService = assigneesApi;
