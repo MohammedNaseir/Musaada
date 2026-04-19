@@ -132,21 +132,46 @@
   "projectId": 5,
   "disbursementDate": "2024-04-18",
   "quantity": "1 طرد",
-  "status": "مكتمل"
+  "status": "مكتمل",
+  "notes": "تم التسليم باليد"
 }
 ```
+
+### تعديل تخصيص مساعدة
+- **الدالة:** `familyProjectService.update(id, data)`
+- **المسار:** `PUT /api/allocations/:id`
+- **البيانات المرسلة (Body) - اختياري التعديل الجزئي:**
+```json
+{
+  "status": "مؤجل",
+  "quantity": "2 طرد"
+}
+```
+
+### التراجع / إلغاء تخصيص مساعدة
+- **الدالة:** `familyProjectService.delete(id)`
+- **المسار:** `DELETE /api/allocations/:id`
 
 ---
 
 ## 5. الإعدادات والثوابت (Settings & Lookups)
 
-هذه البيانات تعتبر قواميس (Lookups) لنظام المنسدلات مثل الجهات المانحة والمكلفين.
+هذه البيانات تعتبر قواميس (Lookups) لنظام المنسدلات. تتواجد هذه الدوال تحت `assistanceTypesService` و `sourcesService` و `assigneesService`.
 
-- **جلب أنواع المساعدات:** `GET /api/assistance-types`
-- **جلب الجهات المانحة:** `GET /api/sources`
-- **جلب الجهات المكلفة (Assignees):** `GET /api/assignees`
+### 5.1 أنواع المساعدات (Assistance Types)
+- **جلب الأنواع:** `GET /api/settings/assistance-types` → `assistanceTypesService.getAll()`
+- **إضافة نوع:** `POST /api/settings/assistance-types` → `assistanceTypesService.add({ name, isActive })`
+- **حذف نوع:** `DELETE /api/settings/assistance-types/:id` → `assistanceTypesService.delete(id)`
 
-*يمكن تطبيق عمليات الـ CRUD العادية (POST, PUT, DELETE) لهذه المسارات كما هو موثق في `settingsMock.ts`.*
+### 5.2 الجهات المانحة والمصادر (Sources)
+- **جلب المصادر:** `GET /api/settings/sources` → `sourcesService.getAll()`
+- **إضافة مصدر:** `POST /api/settings/sources` → `sourcesService.add({ name, isActive })`
+- **حذف مصدر:** `DELETE /api/settings/sources/:id` → `sourcesService.delete(id)`
+
+### 5.3 المكلفين بالتوزيع (Assignees)
+- **جلب المكلفين:** `GET /api/settings/assignees` → `assigneesService.getAll()`
+- **إضافة مكلف:** `POST /api/settings/assignees` → `assigneesService.add({ name, isActive })`
+- **حذف مكلف:** `DELETE /api/settings/assignees/:id` → `assigneesService.delete(id)`
 
 ---
 

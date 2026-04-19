@@ -44,101 +44,104 @@ export default function Dashboard() {
   }, []);
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500 pb-10">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h2 className="text-3xl font-extrabold text-slate-800 tracking-tight">لوحة المعلومات</h2>
-          <p className="text-slate-500 mt-1">نظرة عامة على إحصائيات النظام ومؤشرات الأداء.</p>
-        </div>
-        <div className="px-4 py-2 bg-white rounded-xl shadow-sm border border-slate-100 flex items-center gap-2 text-sm font-semibold text-slate-600">
-           <Activity className="w-4 h-4 text-emerald-500" /> النظام يعمل بكفاءة
-        </div>
+    <div className="space-y-6 animate-in fade-in duration-500 pb-10">
+      <div>
+        <h2 className="text-2xl font-bold text-[#3D3B4A] tracking-tight">لوحة المعلومات</h2>
+        <p className="text-[#A5A3AE] text-sm mt-1 mb-2">إحصائيات النظام العامة والتحديثات الأخيرة.</p>
       </div>
       
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-white rounded-3xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] border border-slate-100 p-6 flex flex-col gap-4 relative overflow-hidden group">
-          <div className="absolute -right-6 -top-6 w-24 h-24 bg-blue-50 rounded-full group-hover:scale-150 transition-transform duration-500 ease-out opacity-50 z-0"></div>
-          <div className="flex justify-between items-start z-10">
-            <div className="p-3 bg-blue-100 text-blue-600 rounded-2xl shadow-sm"><Users className="w-6 h-6" /></div>
-            <span className="flex items-center gap-1 text-xs font-bold text-emerald-500 bg-emerald-50 px-2 py-1 rounded-lg">
-               <TrendingUp className="w-3 h-3"/> مستمر
-            </span>
-          </div>
-          <div className="z-10">
-            <p className="text-3xl font-extrabold text-slate-800 mt-2">{stats.totalFamilies}</p>
-            <p className="text-sm font-semibold text-slate-500 mt-1">إجمالي العائلات المسجلة</p>
+        <div className="bg-white rounded-xl shadow-[0_4px_24px_rgba(34,41,47,0.08)] p-6 flex flex-col gap-3 relative transition-transform hover:-translate-y-1 duration-200">
+          <div className="flex justify-between items-start">
+             <div className="flex flex-col">
+               <span className="text-[28px] font-bold text-[#3D3B4A]">{stats.totalFamilies}</span>
+               <span className="text-sm text-[#5D596C] mt-1">إجمالي العائلات</span>
+             </div>
+             <div className="w-[42px] h-[42px] rounded-lg bg-[#F0EEFF] text-[#7367F0] flex items-center justify-center">
+               <Users className="w-5 h-5" />
+             </div>
           </div>
         </div>
         
-        <div className="bg-white rounded-3xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] border border-slate-100 p-6 flex flex-col gap-4 relative overflow-hidden group">
-          <div className="absolute -right-6 -top-6 w-24 h-24 bg-indigo-50 rounded-full group-hover:scale-150 transition-transform duration-500 ease-out opacity-50 z-0"></div>
-          <div className="flex justify-between items-start z-10">
-            <div className="p-3 bg-indigo-100 text-indigo-600 rounded-2xl shadow-sm"><LayoutList className="w-6 h-6" /></div>
-          </div>
-          <div className="z-10">
-            <p className="text-3xl font-extrabold text-slate-800 mt-2">{stats.activeProjects}</p>
-            <p className="text-sm font-semibold text-slate-500 mt-1">المشاريع الإغاثية النشطة</p>
-          </div>
-        </div>
-        
-        <div className="bg-white rounded-3xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] border border-slate-100 p-6 flex flex-col gap-4 relative overflow-hidden group">
-          <div className="absolute -right-6 -top-6 w-24 h-24 bg-emerald-50 rounded-full group-hover:scale-150 transition-transform duration-500 ease-out opacity-50 z-0"></div>
-          <div className="flex justify-between items-start z-10">
-             <div className="p-3 bg-emerald-100 text-emerald-600 rounded-2xl shadow-sm"><HandHeart className="w-6 h-6" /></div>
-          </div>
-          <div className="z-10">
-            <p className="text-3xl font-extrabold text-slate-800 mt-2">{stats.totalDisbursements}</p>
-            <p className="text-sm font-semibold text-slate-500 mt-1">إجمالي مساعدات تم تخصيصها</p>
+        <div className="bg-white rounded-xl shadow-[0_4px_24px_rgba(34,41,47,0.08)] p-6 flex flex-col gap-3 relative transition-transform hover:-translate-y-1 duration-200">
+          <div className="flex justify-between items-start">
+             <div className="flex flex-col">
+               <span className="text-[28px] font-bold text-[#3D3B4A]">{stats.activeProjects}</span>
+               <span className="text-sm text-[#5D596C] mt-1">المشاريع النشطة</span>
+             </div>
+             <div className="w-[42px] h-[42px] rounded-lg bg-[#E8F9F0] text-[#28C76F] flex items-center justify-center">
+               <LayoutList className="w-5 h-5" />
+             </div>
           </div>
         </div>
         
-        <div className="bg-white rounded-3xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] border border-slate-100 p-6 flex flex-col gap-4 relative overflow-hidden group">
-          <div className="absolute -right-6 -top-6 w-24 h-24 bg-rose-50 rounded-full group-hover:scale-150 transition-transform duration-500 ease-out opacity-50 z-0"></div>
-          <div className="flex justify-between items-start z-10">
-             <div className="p-3 bg-rose-100 text-rose-600 rounded-2xl shadow-sm"><AlertCircle className="w-6 h-6" /></div>
+        <div className="bg-white rounded-xl shadow-[0_4px_24px_rgba(34,41,47,0.08)] p-6 flex flex-col gap-3 relative transition-transform hover:-translate-y-1 duration-200">
+          <div className="flex justify-between items-start">
+             <div className="flex flex-col">
+               <span className="text-[28px] font-bold text-[#3D3B4A]">{stats.totalDisbursements}</span>
+               <span className="text-sm text-[#5D596C] mt-1">إجمالي المساعدات المخصصة</span>
+             </div>
+             <div className="w-[42px] h-[42px] rounded-lg bg-[#FFF0E1] text-[#FF9F43] flex items-center justify-center">
+               <HandHeart className="w-5 h-5" />
+             </div>
           </div>
-          <div className="z-10">
-            <p className="text-3xl font-extrabold text-slate-800 mt-2">{stats.unassistedFamilies}</p>
-            <p className="text-sm font-semibold text-slate-500 mt-1">عائلات قيد انتظار الدعم</p>
+        </div>
+        
+        <div className="bg-white rounded-xl shadow-[0_4px_24px_rgba(34,41,47,0.08)] p-6 flex flex-col gap-3 relative transition-transform hover:-translate-y-1 duration-200">
+          <div className="flex justify-between items-start">
+             <div className="flex flex-col">
+               <span className="text-[28px] font-bold text-[#3D3B4A]">{stats.unassistedFamilies}</span>
+               <span className="text-sm text-[#5D596C] mt-1">عائلات قيد الانتظار</span>
+             </div>
+             <div className="w-[42px] h-[42px] rounded-lg bg-[#FCEAEA] text-[#EA5455] flex items-center justify-center">
+               <AlertCircle className="w-5 h-5" />
+             </div>
           </div>
         </div>
       </div>
 
-      {/* Recent Disbursements Table */}
-      <div className="bg-white rounded-3xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] border border-slate-100 overflow-hidden flex flex-col">
-        <div className="p-6 border-b border-slate-100 bg-slate-50/50">
-          <h3 className="font-bold text-lg text-slate-800">آخر عمليات تخصيص مساعدات (الحديثة)</h3>
-          <p className="text-xs text-slate-500 mt-1">سجل التخصيصات المضافة مؤخراً للنظام</p>
+      {/* Recent Allocations Table */}
+      <div className="bg-white rounded-xl shadow-[0_4px_24px_rgba(34,41,47,0.08)] overflow-hidden">
+        <div className="px-6 py-5 border-b border-[#E6E6E8] flex justify-between items-center">
+          <h3 className="text-lg font-bold text-[#3D3B4A]">أحدث التخصيصات (آخر 5 إجراءات)</h3>
         </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-right text-sm">
-            <thead className="bg-white border-b border-slate-100 text-slate-500 font-semibold">
+        <div className="overflow-x-auto overflow-y-auto">
+          <table className="w-full text-right whitespace-nowrap min-w-[600px]">
+            <thead className="bg-[#F8F7FA]">
               <tr>
-                <th className="px-6 py-4">اسم العائلة المستفيدة</th>
-                <th className="px-6 py-4">المشروع الإغاثي</th>
-                <th className="px-6 py-4">تاريخ التخصيص</th>
-                <th className="px-6 py-4 text-center">الحالة</th>
+                <th className="px-6 py-3 text-xs font-semibold text-[#5D596C] uppercase tracking-wider">العائلة</th>
+                <th className="px-6 py-3 text-xs font-semibold text-[#5D596C] uppercase tracking-wider">المشروع</th>
+                <th className="px-6 py-3 text-xs font-semibold text-[#5D596C] uppercase tracking-wider">التاريخ</th>
+                <th className="px-6 py-3 text-xs font-semibold text-[#5D596C] uppercase tracking-wider">الحالة</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-50">
-              {recent.map((r, idx) => (
-                <tr key={idx} className="hover:bg-slate-50/80 transition-colors">
-                  <td className="px-6 py-4 font-bold text-slate-800">{r.family}</td>
-                  <td className="px-6 py-4 font-semibold text-indigo-700">{r.project}</td>
-                  <td className="px-6 py-4 text-slate-500 font-medium">{r.disbursementDate}</td>
-                  <td className="px-6 py-4 text-center">
-                    <span className={`inline-flex px-3 py-1 rounded-md text-xs font-semibold shadow-sm
-                      ${r.status === 'مكتمل' ? 'bg-emerald-100 text-emerald-700' : 
-                        r.status === 'مؤجل' ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700'}`}>
-                      {r.status}
-                    </span>
-                  </td>
+            <tbody className="divide-y divide-[#E6E6E8]">
+              {recent.length === 0 ? (
+                <tr>
+                  <td colSpan={4} className="px-6 py-8 text-center text-[#A5A3AE]">لا توجد بيانات مسجلة مؤخراً</td>
                 </tr>
-              ))}
+              ) : (
+                recent.map((r, i) => (
+                   <tr key={i} className="hover:bg-[#7367F0]/[0.05] transition-colors even:bg-[#FAFAFA] h-[52px]">
+                     <td className="px-6 py-2 text-sm font-bold text-[#3D3B4A]">{r.family}</td>
+                     <td className="px-6 py-2 text-sm text-[#5D596C]">{r.project}</td>
+                     <td className="px-6 py-2 text-sm font-mono text-[#5D596C]">{r.disbursementDate}</td>
+                     <td className="px-6 py-2">
+                        <span className={`inline-flex px-2 py-0.5 rounded-full text-[13px] font-medium leading-5 ${
+                          r.status === 'مكتمل' ? 'bg-[#E8F9F0] text-[#28C76F]' : 
+                          r.status === 'مؤجل' ? 'bg-[#FFF0E1] text-[#FF9F43]' : 
+                          r.status === 'ملغي' ? 'bg-[#FCEAEA] text-[#EA5455]' : 
+                          'bg-[#E0F9FC] text-[#00CFE8]'
+                        }`}>
+                           {r.status}
+                        </span>
+                     </td>
+                   </tr>
+                ))
+              )}
             </tbody>
           </table>
-          {recent.length === 0 && <div className="p-10 text-center text-slate-500 font-medium">لا يوجد بيانات لصرفيات جديدة.</div>}
         </div>
       </div>
     </div>

@@ -540,8 +540,8 @@ export default function Reports() {
                 </div>
               ) : (
               <>
-              <div className="overflow-auto max-h-[500px]">
-              <table className="w-full text-right text-sm whitespace-nowrap relative">
+              <div className="overflow-x-auto overflow-y-auto max-h-[500px]">
+              <table className="w-full text-right text-sm whitespace-nowrap relative min-w-[1000px]">
                 <thead className="bg-slate-100 border-b border-slate-200 text-slate-700 font-extrabold sticky top-0 z-20 shadow-sm">
                   <tr>
                     {selectedColumns.includes('headFullName') && <th className="px-5 py-4">اسم رب الأسرة</th>}

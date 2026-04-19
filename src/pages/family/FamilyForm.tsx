@@ -287,8 +287,8 @@ export default function FamilyForm() {
                 </form>
               </div>
 
-              <div className="border border-slate-100 rounded-2xl overflow-hidden shadow-sm">
-                <table className="w-full text-right text-sm">
+              <div className="border border-slate-100 rounded-2xl overflow-x-auto shadow-sm">
+                <table className="w-full text-right text-sm min-w-[500px]">
                   <thead className="bg-slate-50 border-b border-slate-100 text-slate-500">
                     <tr>
                       <th className="px-5 py-3 font-semibold">الاسم</th>
