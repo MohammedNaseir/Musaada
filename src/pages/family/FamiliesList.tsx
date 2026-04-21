@@ -106,175 +106,200 @@ export default function FamiliesList() {
   const totalPages = Math.ceil(filtered.length / itemsPerPage);
 
   return (
-    <div className="bg-white rounded-3xl shadow-[0_2px_20px_-3px_rgba(0,0,0,0.05)] border border-slate-100 flex flex-col h-[calc(100vh-8rem)] animate-in fade-in duration-500 overflow-hidden">
-      <div className="p-8 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-center gap-4 bg-slate-50/50">
+    <div className="card flex flex-col h-[calc(100vh-8rem)] overflow-hidden p-0">
+      <div className="card-header pb-0 border-b-0 px-6 pt-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
         <div>
-          <h2 className="text-2xl font-extrabold text-slate-800 tracking-tight">سجل العائلات</h2>
-          <p className="text-slate-500 text-sm mt-1">إدارة بيانات المستفيدين ومتابعة ملفاتهم.</p>
+          <h2 className="card-title">سجل العائلات</h2>
+          <p className="body-3 text-[var(--grey-600)] mt-1">إدارة بيانات المستفيدين ومتابعة ملفاتهم.</p>
         </div>
-        <div className="flex gap-3 w-full sm:w-auto">
-          <button onClick={handleOpenExportModal} className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-2.5 bg-emerald-50 text-emerald-700 font-semibold rounded-xl hover:bg-emerald-100 transition-colors">
-            <Download className="w-4 h-4" /> تصدير Excel
-          </button>
-          <Link to="/families/new" className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-2.5 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-700 transition-colors shadow-sm hover:shadow-md">
-            <Plus className="w-4 h-4" /> إضافة عائلة
-          </Link>
+        
+        <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+          <div className="relative w-full sm:w-[280px]">
+            <Search className="w-4 h-4 absolute right-3 top-3.5 text-[var(--grey-500)]" />
+            <input 
+              type="text" 
+              placeholder="بحث بالحقول الرئيسية..." 
+              value={searchTerm}
+              onChange={e => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+              className="form-input w-full pl-3 pr-9 py-2"
+            />
+          </div>
+          
+          <div className="relative w-full sm:w-[220px]">
+            <select 
+              value={assigneeFilter}
+              onChange={e => { setAssigneeFilter(e.target.value); setCurrentPage(1); }}
+              className="form-input w-full px-3 py-2 appearance-none"
+            >
+              <option value="">تصفية حسب الجهة المكلفة</option>
+              {assignees.map(a => <option key={a.id} value={a.id}>{a.name}</option>)}
+            </select>
+          </div>
+
+          <div className="flex gap-2 w-full sm:w-auto">
+            <button onClick={handleOpenExportModal} className="btn btn-outline btn-small flex-1 sm:flex-none whitespace-nowrap">
+              <Download className="w-4 h-4" /> تصدير
+            </button>
+            <Link to="/families/new" className="btn btn-primary btn-small flex-1 sm:flex-none whitespace-nowrap">
+              <Plus className="w-4 h-4" /> إضافة عائلة
+            </Link>
+          </div>
         </div>
       </div>
 
-      <div className="p-6 border-b border-slate-100 flex flex-col sm:flex-row gap-4 bg-white">
-        <div className="flex-1 relative">
-          <Search className="w-5 h-5 absolute right-4 top-3 text-slate-400" />
-          <input 
-            type="text" 
-            placeholder="بحث بالاسم، الهوية، أو رقم الجوال..." 
-            value={searchTerm}
-            onChange={e => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-            className="w-full pl-4 pr-12 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all placeholder:text-slate-400 text-sm font-medium"
-          />
-        </div>
-        <div className="w-full sm:w-64 relative">
-          <Filter className="w-4 h-4 absolute right-4 top-3.5 text-slate-400" />
-          <select 
-            value={assigneeFilter}
-            onChange={e => { setAssigneeFilter(e.target.value); setCurrentPage(1); }}
-            className="w-full pl-4 pr-11 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-sm font-medium appearance-none"
-          >
-            <option value="">تصفية حسب الجهة المكلفة</option>
-            {assignees.map(a => <option key={a.id} value={a.id}>{a.name}</option>)}
-          </select>
-        </div>
-      </div>
-
-      <div className="flex-1 overflow-auto bg-white relative">
-        <table className="w-full text-right text-sm whitespace-nowrap">
-          <thead className="bg-slate-100 text-slate-700 font-extrabold sticky top-0 z-20 shadow-sm border-b border-slate-200">
-            <tr>
-              <th className="px-6 py-4">اسم رب الأسرة</th>
-              <th className="px-6 py-4">رقم الهوية</th>
-              <th className="px-6 py-4">الجوال</th>
-              <th className="px-6 py-4">الجهة المكلفة</th>
-              <th className="px-6 py-4 text-center">أفراد الأسرة</th>
-              <th className="px-6 py-4 text-center">التواجد الحالي</th>
-              <th className="px-6 py-4 text-center">مرات الاستفادة</th>
-              <th className="px-6 py-4 text-center">إجراءات</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-100 relative z-0">
-            {loading ? (
-              <tr><td colSpan={8} className="text-center py-20 text-slate-500">
-                 <div className="animate-pulse flex flex-col items-center gap-3">
-                   <div className="w-8 h-8 rounded-full border-4 border-slate-200 border-t-blue-600 animate-spin"></div>
-                   <span>جاري تحميل البيانات...</span>
-                 </div>
-              </td></tr>
-            ) : filtered.length === 0 ? (
-              <tr><td colSpan={8} className="text-center py-20 text-slate-400">
-                <div className="flex flex-col items-center gap-2">
-                  <Search className="w-8 h-8 opacity-50" />
-                  <p>لا توجد بيانات مطابقة لبحثك</p>
-                </div>
-              </td></tr>
-            ) : (
-              paginatedData.map(f => (
-                <tr key={f.id} className="hover:bg-slate-50/80 transition-colors group">
-                  <td className="px-6 py-5 font-bold text-slate-800">{f.headFullName}</td>
-                  <td className="px-6 py-5 font-mono text-slate-600 tracking-tight">{f.headIdentityNumber}</td>
-                  <td className="px-6 py-5 font-mono text-slate-600 tracking-tight" dir="ltr">{f.mobileNumber || '-'}</td>
-                  <td className="px-6 py-5 text-slate-500 font-medium">
-                    <span className="bg-slate-100 px-2.5 py-1 rounded-md text-xs">{f.assigneeName}</span>
-                  </td>
-                  <td className="px-6 py-5 text-center">
-                    <span className="font-bold text-slate-700">{f.memberCount + 1}</span>
-                  </td>
-                  <td className="px-6 py-5 text-center">
-                     <span className={`inline-flex px-2 py-1 rounded-md text-[10px] font-bold ${f.region === 'شمال وادي غزة' ? 'bg-orange-100 text-orange-700' : f.region === 'جنوب وادي غزة' ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-600'}`}>
-                        {f.region || 'غير محدد'}
-                     </span>
-                  </td>
-                  <td className="px-6 py-5 text-center">
-                    <span className={`inline-flex min-w-[2rem] items-center justify-center px-2 py-1 rounded-md text-xs font-bold ${f.projectCount > 0 ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-500'}`}>
-                      {f.projectCount}
-                    </span>
-                  </td>
-                  <td className="px-6 py-5 text-center">
-                    <div className="flex flex-row-reverse items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button onClick={() => handleDelete(f.id, f.projectCount)} className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors" title="حذف">
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                      <Link to={`/families/${f.id}/edit`} className="p-2 text-slate-400 hover:text-emerald-500 hover:bg-emerald-50 rounded-lg transition-colors" title="تعديل">
-                        <Edit className="w-4 h-4" />
-                      </Link>
-                      <Link to={`/families/${f.id}`} className="p-2 text-slate-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors" title="عرض التفاصيل">
-                        <Eye className="w-4 h-4" />
-                      </Link>
-                    </div>
-                  </td>
+      <div className="flex-1 overflow-x-auto overflow-y-auto bg-[var(--white)] relative">
+        {loading ? (
+          <div className="absolute inset-0 flex items-center justify-center bg-[var(--white)] z-10 transition-opacity">
+            <div className="flex flex-col items-center gap-3">
+              <div className="w-10 h-10 border-4 border-[var(--primary-200)] border-t-[var(--primary-500)] rounded-full animate-spin"></div>
+              <p className="body-3 text-[var(--secondary-400)]">جاري تحميل البيانات...</p>
+            </div>
+          </div>
+        ) : (
+          <table className="table min-w-[1000px] rounded-none shadow-none mt-2">
+            <thead className="sticky top-0 z-10">
+              <tr>
+                <th className="w-14 text-center">#</th>
+                <th>رقم الهوية</th>
+                <th>اسم رب الأسرة</th>
+                <th>رقم الجوال</th>
+                <th>الحالة والمكان</th>
+                <th>المكلف بالشؤون</th>
+                <th className="text-center">المساعدات</th>
+                <th className="text-center">إجراءات</th>
+              </tr>
+            </thead>
+            <tbody>
+              {paginatedData.length === 0 ? (
+                <tr>
+                  <td colSpan={8} className="text-center text-[var(--grey-500)] py-12 font-medium">لا توجد عائلات تطابق بحثك...</td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              ) : (
+                paginatedData.map((f, i) => (
+                  <tr key={f.id}>
+                    <td className="text-center text-[var(--secondary-400)] font-medium">{(currentPage - 1) * itemsPerPage + i + 1}</td>
+                    <td className="font-mono text-[var(--secondary-500)]">{f.headIdentityNumber}</td>
+                    <td className="font-bold text-[var(--secondary-500)]">{f.headFullName}</td>
+                    <td className="font-mono text-[var(--secondary-400)]" dir="ltr">{f.mobileNumber || '-'}</td>
+                    <td>
+                      <div className="flex flex-col gap-1.5">
+                        <span className="body-4 text-[var(--secondary-500)] break-words max-w-[150px]">{f.currentResidence}</span>
+                        <div className="flex gap-1 flex-wrap">
+                          {f.isDisplaced ? (
+                            <span className="badge badge-warning text-[10px] py-0 px-2 rounded-md">نازح</span>
+                          ) : (
+                            <span className="badge badge-success text-[10px] py-0 px-2 rounded-md">مقيم</span>
+                          )}
+                          <span className="badge badge-neutral text-[10px] py-0 px-2 rounded-md">{f.region || 'غير محدد'}</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      {f.assigneeId ? (
+                         <span className="badge badge-primary text-xs max-w-[150px] truncate block" title={f.assigneeName}>{f.assigneeName}</span>
+                      ) : (
+                         <span className="badge badge-neutral text-xs">غير محدد</span>
+                      )}
+                    </td>
+                    <td className="text-center">
+                      <span className={`inline-flex items-center justify-center min-w-[24px] h-6 px-1.5 rounded-full text-xs font-bold ${
+                        f.projectCount > 0 ? 'bg-[var(--tertiary-100)] text-[var(--tertiary-500)]' : 'bg-[var(--grey-100)] text-[var(--grey-500)]'
+                      }`}>
+                        {f.projectCount}
+                      </span>
+                    </td>
+                    <td>
+                      <div className="flex items-center justify-center gap-1">
+                        <Link to={`/families/${f.id}`} className="text-[var(--secondary-300)] hover:text-[var(--primary-500)] p-1.5 rounded-md hover:bg-[var(--primary-100)] transition-colors" title="عرض التفاصيل">
+                           <Eye className="w-[18px] h-[18px]" />
+                        </Link>
+                        <Link to={`/families/${f.id}/edit`} className="text-[var(--secondary-300)] hover:text-[var(--tertiary-500)] p-1.5 rounded-md hover:bg-[var(--tertiary-100)] transition-colors" title="تعديل البيانات">
+                           <Edit className="w-[18px] h-[18px]" />
+                        </Link>
+                        <button 
+                           onClick={() => handleDelete(f.id, f.projectCount)}
+                           disabled={f.projectCount > 0}
+                           className="text-[var(--secondary-300)] hover:text-[var(--alert-danger-500)] p-1.5 rounded-md hover:bg-[var(--alert-danger-100)] disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-[var(--secondary-300)] transition-colors"
+                           title={f.projectCount > 0 ? 'لا يمكن الحذف لارتباطها بمساعدات' : 'حذف'}
+                        >
+                           <Trash2 className="w-[18px] h-[18px]" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        )}
       </div>
 
-      <div className="flex flex-wrap items-center justify-between p-4 border-t border-slate-100 bg-slate-50/80 gap-4 mt-auto">
-         <span className="text-xs text-slate-500 font-medium font-mono bg-white px-3 py-1.5 rounded border border-slate-200 shadow-sm">
-            عرض {(currentPage - 1) * itemsPerPage + 1} - {Math.min(currentPage * itemsPerPage, filtered.length)} من أصل {filtered.length}
-         </span>
-         <div className="flex items-center gap-1.5">
-            <button onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1} className="px-4 py-2 bg-white border border-slate-200 rounded-lg text-xs font-bold text-slate-600 hover:bg-blue-50 hover:text-blue-600 disabled:opacity-50 disabled:hover:bg-white disabled:hover:text-slate-600 transition-colors shadow-sm">السابق</button>
-            <span className="text-xs font-extrabold text-slate-700 px-3 bg-white py-2 rounded-lg border border-slate-200 shadow-sm">صفحة {currentPage} / {totalPages}</span>
-            <button onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages} className="px-4 py-2 bg-white border border-slate-200 rounded-lg text-xs font-bold text-slate-600 hover:bg-blue-50 hover:text-blue-600 disabled:opacity-50 disabled:hover:bg-white disabled:hover:text-slate-600 transition-colors shadow-sm">التالي</button>
-         </div>
+      <div className="px-6 py-4 border-t border-[var(--grey-200)] flex items-center justify-between bg-[var(--bg-tertiary)]">
+        <span className="body-3 text-[var(--secondary-400)]">
+          إجمالي النتائج: <strong className="text-[var(--secondary-500)] font-bold">{filtered.length}</strong> عائلة
+        </span>
+        
+        {totalPages > 1 && (
+          <div className="flex items-center gap-1.5">
+            <button 
+              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              className="btn-pagination h-8"
+            >
+              السابق
+            </button>
+            <span className="text-xs font-extrabold text-[var(--secondary-500)] px-3 bg-[var(--white)] py-1.5 flex items-center rounded-lg border border-[var(--grey-200)] shadow-sm">
+              صفحة {currentPage} من {totalPages}
+            </span>
+            <button 
+              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+              className="btn-pagination h-8"
+            >
+              التالي
+            </button>
+          </div>
+        )}
       </div>
 
       {isExportModalOpen && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-3xl p-6 md:p-8 w-full max-w-md shadow-[0_20px_50px_-12px_rgba(0,0,0,0.5)] relative animate-in zoom-in-95 duration-200">
-            <button onClick={() => setIsExportModalOpen(false)} className="absolute top-6 left-6 p-2 text-slate-400 hover:text-slate-800 hover:bg-slate-100 rounded-full transition-colors"><X className="w-5 h-5"/></button>
-            
-            <div className="mb-6">
-               <h3 className="text-xl font-extrabold text-slate-800 mb-1 flex items-center gap-2">
-                 <Download className="w-5 h-5 text-emerald-600" /> تصدير البيانات
-               </h3>
-               <p className="text-sm text-slate-500">سيتم استخراج البيانات المعروضة حالياً.</p>
+        <div className="fixed inset-0 bg-[var(--secondary-500)]/40 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="card w-full max-w-sm" dir="rtl">
+            <div className="card-header border-b-0 pb-0 flex justify-between items-center mb-4">
+              <h3 className="h6 flex items-center gap-2">
+                <FileSpreadsheet className="w-5 h-5 text-[var(--alert-success-500)]" />
+                تصدير إلى Excel
+              </h3>
+              <button onClick={() => setIsExportModalOpen(false)} className="text-[var(--grey-500)] hover:text-[var(--secondary-500)]">
+                <X className="w-5 h-5" />
+              </button>
             </div>
             
-            <div className="space-y-5 mb-8">
-              <div className="bg-emerald-50/50 border border-emerald-100 rounded-xl p-4 flex items-center gap-3">
-                 <div className="bg-emerald-100 text-emerald-600 p-2 rounded-lg">
-                   <FileSpreadsheet className="w-5 h-5" />
-                 </div>
-                 <div>
-                    <p className="text-xs font-bold text-emerald-800">إجمالي السجلات:</p>
-                    <p className="text-xl font-black text-emerald-700">{filtered.length} <span className="text-sm font-medium">سجل</span></p>
-                 </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-2">تسمية الملف</label>
-                <div className="relative">
-                  <input 
-                    type="text" 
-                    value={exportFileName}
-                    onChange={(e) => setExportFileName(e.target.value)}
-                    className="w-full pl-4 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all font-medium text-slate-800"
-                    placeholder="أدخل اسم الملف..."
-                    dir="rtl"
-                  />
-                  <span className="absolute left-4 top-3.5 text-xs font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded">.xlsx</span>
-                </div>
-              </div>
+            <div className="form-field mb-6">
+              <label className="form-label text-[var(--secondary-500)] mb-2">اسم الملف:</label>
+              <input 
+                type="text" 
+                value={exportFileName}
+                onChange={e => setExportFileName(e.target.value)}
+                className="form-input w-full"
+                autoFocus
+              />
             </div>
-
-            <div className="flex items-center gap-3">
+            
+            <div className="flex justify-end gap-3 mt-4">
+              <button 
+                onClick={() => setIsExportModalOpen(false)}
+                className="btn btn-outline"
+              >
+                إلغاء
+              </button>
               <button 
                 onClick={performExport}
-                className="flex-1 py-3.5 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-700 transition-colors shadow-lg shadow-emerald-600/20 flex items-center justify-center gap-2"
+                className="btn btn-primary"
               >
-                <Check className="w-5 h-5"/> بدء التصدير القطعي
+                <Download className="w-4 h-4 ml-2" />
+                تصدير الآن
               </button>
-              <button onClick={() => setIsExportModalOpen(false)} className="px-6 py-3.5 bg-slate-100 text-slate-600 rounded-xl font-bold hover:bg-slate-200 transition-colors">إلغاء</button>
             </div>
           </div>
         </div>

@@ -60,8 +60,8 @@ export default function ProjectForm() {
   };
 
   if (loading) return (
-    <div className="flex h-[50vh] items-center justify-center text-slate-500">
-      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+    <div className="flex h-[50vh] items-center justify-center text-[var(--secondary-400)]">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--primary-500)]"></div>
     </div>
   );
 
@@ -69,92 +69,92 @@ export default function ProjectForm() {
     <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in duration-500 pb-10">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <Link to="/projects" className="p-2.5 bg-white rounded-xl shadow-sm border border-slate-200 hover:bg-slate-50 transition-colors"><ArrowLeft className="w-5 h-5 text-slate-600" /></Link>
+          <Link to="/projects" className="p-2.5 bg-[var(--white)] rounded-xl shadow-sm border border-[var(--grey-200)] hover:bg-[var(--bg-tertiary)] transition-colors"><ArrowLeft className="w-5 h-5 text-[var(--secondary-400)]" /></Link>
           <div>
-            <h2 className="text-2xl font-extrabold text-slate-800 tracking-tight">{isEdit ? 'تعديل بيانات المشروع' : 'إضافة مشروع إغاثي جديد'}</h2>
-            <p className="text-slate-500 text-sm mt-1">تعبئة البيانات الأساسية وتفاصيل المشروع</p>
+            <h2 className="h4 text-[var(--secondary-500)] tracking-tight">{isEdit ? 'تعديل بيانات المشروع' : 'إضافة مشروع إغاثي جديد'}</h2>
+            <p className="body-4 text-[var(--grey-500)] mt-1">تعبئة البيانات الأساسية وتفاصيل المشروع</p>
           </div>
         </div>
       </div>
 
       {error && (
-        <div className="bg-red-50 text-red-600 p-4 rounded-xl flex items-center gap-3 border border-red-100 shadow-sm animate-in slide-in-from-top-2">
-          <AlertTriangle className="w-5 h-5" />
+        <div className="alert alert-danger animate-in slide-in-from-top-2">
+          <AlertTriangle className="w-5 h-5 alert-icon" />
           <span className="font-medium">{error}</span>
         </div>
       )}
 
-      <div className="bg-white rounded-3xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] border border-slate-100 overflow-hidden">
-        <div className="p-6 border-b border-slate-100 bg-slate-50/50">
-           <h3 className="font-bold text-lg text-slate-800">البيانات الأساسية للمشروع</h3>
+      <div className="card p-0 overflow-hidden">
+        <div className="card-header border-b border-[var(--grey-200)] px-6 py-5 mb-0 pb-5">
+           <h3 className="card-title">البيانات الأساسية للمشروع</h3>
         </div>
-        <div className="p-8">
+        <div className="px-6 py-6 border-b border-[var(--grey-100)]">
           <form id="project-form" onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-            <div className="md:col-span-2 space-y-1.5">
-              <label className="block text-sm font-semibold text-slate-700">عنوان المشروع <span className="text-red-500">*</span></label>
-              <input {...register('name', { required: 'عنوان المشروع مطلوب' })} placeholder="مثال: مشروع توزيع السلال الغذائية - رمضان" className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none" />
-              {errors.name && <span className="text-red-500 text-xs font-medium">{errors.name.message}</span>}
+            <div className="md:col-span-2 form-field space-y-1.5">
+              <label className="form-label tracking-tight">عنوان المشروع <span className="text-[var(--alert-danger-500)]">*</span></label>
+              <input {...register('name', { required: 'عنوان المشروع مطلوب' })} placeholder="مثال: مشروع توزيع السلال الغذائية - رمضان" className={`form-input h-11 ${errors.name ? 'form-error' : ''}`} />
+              {errors.name && <span className="form-helper text-[var(--alert-danger-500)]">{errors.name.message}</span>}
             </div>
 
-            <div className="space-y-1.5">
-              <label className="block text-sm font-semibold text-slate-700">نوع المساعدة <span className="text-red-500">*</span></label>
-              <select {...register('assistanceTypeId', { required: true })} className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none appearance-none">
+            <div className="form-field space-y-1.5">
+              <label className="form-label tracking-tight">نوع المساعدة <span className="text-[var(--alert-danger-500)]">*</span></label>
+              <select {...register('assistanceTypeId', { required: true })} className="form-input h-11 appearance-none">
                 <option value="">تحديد نوع المساعدة...</option>
                 {types.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
               </select>
             </div>
 
-            <div className="space-y-1.5">
-              <label className="block text-sm font-semibold text-slate-700">المصدر / الجهة المانحة <span className="text-red-500">*</span></label>
-              <select {...register('sourceId', { required: true })} className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none appearance-none">
+            <div className="form-field space-y-1.5">
+              <label className="form-label tracking-tight">المصدر / الجهة المانحة <span className="text-[var(--alert-danger-500)]">*</span></label>
+              <select {...register('sourceId', { required: true })} className="form-input h-11 appearance-none">
                 <option value="">تحديد الجهة المانحة...</option>
                 {sources.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
               </select>
             </div>
 
-            <div className="space-y-1.5">
-              <label className="block text-sm font-semibold text-slate-700">تاريخ البدء <span className="text-red-500">*</span></label>
-              <input type="date" {...register('startDate', { required: true })} className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none text-slate-700 font-mono text-right" />
+            <div className="form-field space-y-1.5">
+              <label className="form-label tracking-tight">تاريخ البدء <span className="text-[var(--alert-danger-500)]">*</span></label>
+              <input type="date" {...register('startDate', { required: true })} className="form-input h-11 font-mono text-right" />
             </div>
 
-            <div className="space-y-1.5">
-              <label className="block text-sm font-semibold text-slate-700">تاريخ الانتهاء المتوقع</label>
-              <input type="date" {...register('endDate')} className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none text-slate-700 font-mono text-right" />
+            <div className="form-field space-y-1.5">
+              <label className="form-label tracking-tight">تاريخ الانتهاء المتوقع</label>
+              <input type="date" {...register('endDate')} className="form-input h-11 font-mono text-right" />
             </div>
             
-            <div className="space-y-1.5">
-              <label className="block text-sm font-semibold text-slate-700">دورية المشروع <span className="text-red-500">*</span></label>
-              <select {...register('projectType')} defaultValue="لمرة واحدة" className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none appearance-none">
+            <div className="form-field space-y-1.5">
+              <label className="form-label tracking-tight">دورية المشروع <span className="text-[var(--alert-danger-500)]">*</span></label>
+              <select {...register('projectType')} defaultValue="لمرة واحدة" className="form-input h-11 appearance-none">
                 <option value="لمرة واحدة">لمرة واحدة (طوارئ/حملة مؤقتة)</option>
                 <option value="مستمر">مستمر (دوري)</option>
               </select>
             </div>
             
-            <div className="space-y-1.5">
-              <label className="block text-sm font-semibold text-slate-700">حالة المشروع <span className="text-red-500">*</span></label>
-              <select {...register('status')} defaultValue="مخطط له" className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none appearance-none">
+            <div className="form-field space-y-1.5">
+              <label className="form-label tracking-tight">حالة المشروع <span className="text-[var(--alert-danger-500)]">*</span></label>
+              <select {...register('status')} defaultValue="مخطط له" className="form-input h-11 appearance-none">
                 <option value="مخطط له">مخطط له (لم يبدأ)</option>
                 <option value="نشط">نشط (قيد التنفيذ)</option>
                 <option value="منتهي">منتهي</option>
               </select>
             </div>
 
-            <div className="space-y-1.5 md:col-span-2">
-              <label className="block text-sm font-semibold text-slate-700">توصيف المشروع وملاحظات إضافية</label>
-              <textarea {...register('description')} className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none resize-none" rows={4} placeholder="تفاصيل إضافية حول المشروع..."></textarea>
+            <div className="space-y-1.5 md:col-span-2 form-field">
+              <label className="form-label tracking-tight">توصيف المشروع وملاحظات إضافية</label>
+              <textarea {...register('description')} className="form-input py-3 resize-none" rows={4} placeholder="تفاصيل إضافية حول المشروع..."></textarea>
             </div>
             
           </form>
         </div>
         
-        <div className="p-6 border-t border-slate-100 bg-slate-50/50 flex justify-end gap-3">
-          <Link to="/projects" className="px-8 py-3 bg-white text-slate-600 rounded-xl hover:bg-slate-100 font-bold border border-slate-200 transition-all text-center">إلغاء وتراجع</Link>
-          <button type="submit" form="project-form" disabled={isSubmitting} className="flex items-center justify-center gap-2 px-8 py-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 font-bold shadow-md shadow-indigo-500/20 transition-all hover:-translate-y-0.5 min-w-[200px] disabled:opacity-75 disabled:hover:translate-y-0">
+        <div className="px-6 py-5 bg-[var(--bg-tertiary)] flex justify-end gap-3 flex-col sm:flex-row">
+          <Link to="/projects" className="btn btn-outline min-w-[150px]">إلغاء وتراجع</Link>
+          <button type="submit" form="project-form" disabled={isSubmitting} className="btn btn-primary min-w-[200px]">
             {isSubmitting ? (
               <Loader2 className="w-5 h-5 animate-spin" />
             ) : (
               <>
-                <Save className="w-5 h-5"/>
+                <Save className="w-5 h-5 mr-2"/>
                 {isEdit ? 'حفظ التعديلات' : 'اعتماد المشروع'}
               </>
             )}

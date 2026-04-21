@@ -27,49 +27,52 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4" dir="rtl">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-sm border border-slate-200 p-8 relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-1 bg-blue-600"></div>
+    <div className="min-h-screen bg-[var(--bg-secondary)] flex items-center justify-center p-4 relative overflow-hidden" dir="rtl">
+      {/* Background Decorative Shapes */}
+      <div className="absolute top-[-10%] right-[-5%] w-[400px] h-[400px] rounded-full bg-[var(--primary-500)]/10 blur-[80px] pointer-events-none"></div>
+      <div className="absolute bottom-[-10%] left-[-5%] w-[300px] h-[300px] rounded-full bg-[var(--tertiary-500)]/10 blur-[80px] pointer-events-none"></div>
+
+      <div className="card w-full max-w-[400px] p-8 relative z-10 animate-in fade-in zoom-in-95 duration-500">
         
         <div className="text-center mb-8 mt-2">
-          <div className="w-14 h-14 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center mx-auto mb-4">
-            <ShieldCheck className="w-7 h-7" />
+          <div className="w-12 h-12 bg-[var(--primary-100)] text-[var(--primary-500)] rounded-lg flex items-center justify-center mx-auto mb-4">
+            <ShieldCheck className="w-6 h-6" />
           </div>
-          <h1 className="text-2xl font-bold text-slate-800">تسجيل الدخول</h1>
-          <p className="text-slate-500 text-sm mt-1">لوحة تحكم النظام</p>
+          <h1 className="h4 text-[var(--secondary-500)]">مرحباً بك في النظام 👋</h1>
+          <p className="body-4 text-[var(--grey-500)] mt-1.5 leading-relaxed">الرجاء تسجيل الدخول للوصول إلى لوحة التحكم الخاصة بك</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
-            <div className="p-3 bg-red-50 text-red-700 rounded-lg text-sm font-medium border border-red-100 text-center">
+            <div className="alert alert-danger px-3 py-2 text-center text-sm">
               {error}
             </div>
           )}
 
-          <div className="space-y-1.5">
-            <label className="block text-sm font-semibold text-slate-700">البريد الإلكتروني</label>
+          <div className="form-field space-y-1.5">
+            <label className="form-label">البريد الإلكتروني</label>
             <div className="relative">
-              <Mail className="absolute right-3.5 top-3 w-4 h-4 text-slate-400" />
+              <Mail className="absolute right-3 top-3 w-4 h-4 text-[var(--grey-400)]" />
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full pr-10 pl-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-sm font-medium text-slate-800"
+                className="form-input pr-9 w-full"
                 required
                 dir="ltr"
               />
             </div>
           </div>
 
-          <div className="space-y-1.5">
-            <label className="block text-sm font-semibold text-slate-700">كلمة المرور</label>
+          <div className="form-field space-y-1.5 pb-2">
+            <label className="form-label">كلمة المرور</label>
             <div className="relative">
-              <Lock className="absolute right-3.5 top-3 w-4 h-4 text-slate-400" />
+              <Lock className="absolute right-3 top-3 w-4 h-4 text-[var(--grey-400)]" />
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full pr-10 pl-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-sm font-medium text-slate-800"
+                className="form-input pr-9 w-full"
                 required
                 dir="ltr"
               />
@@ -79,12 +82,12 @@ export default function Login() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-2.5 mt-2 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 transition-colors flex justify-center items-center gap-2 disabled:opacity-75 disabled:cursor-not-allowed"
+            className="btn btn-primary w-full h-[38px]"
           >
             {isLoading ? (
               <Loader2 className="w-4 h-4 animate-spin" />
             ) : (
-              'دخول'
+              'تسجيل الدخول'
             )}
           </button>
         </form>

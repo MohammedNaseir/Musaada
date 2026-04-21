@@ -58,41 +58,40 @@ export default function Settings() {
   };
 
   const renderTable = (data: any[], type: 'type' | 'source' | 'assignee') => (
-    <div className="bg-white rounded-2xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] border border-slate-100 overflow-hidden animate-in fade-in slide-in-from-bottom-2">
-      <div className="flex justify-between items-center p-6 border-b border-slate-100 bg-slate-50/50">
-        <h3 className="font-bold text-lg text-slate-800">
+    <div className="card p-0 overflow-hidden animate-in fade-in slide-in-from-bottom-2">
+      <div className="flex justify-between items-center px-6 py-5 border-b border-[var(--grey-100)] card-header pb-5 mb-0">
+        <h3 className="card-title">
           {type === 'type' && 'أنواع المساعدات'}
           {type === 'source' && 'إدارة الجهات المانحة'}
           {type === 'assignee' && 'إدارة المكلفين / اللجان'}
         </h3>
-        <button onClick={() => handleAddEntity(type)} className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition shadow-sm hover:shadow">
-          <Plus className="w-4 h-4"/> إضافة جديد
+        <button onClick={() => handleAddEntity(type)} className="btn btn-primary h-[38px] px-4 py-0 text-sm">
+          <Plus className="w-4 h-4 mr-2"/> إضافة جديد
         </button>
       </div>
-      <div className="overflow-x-auto">
-        <table className="w-full text-right text-sm">
-          <thead className="bg-slate-50 border-b border-slate-100 text-slate-500">
+      <div className="overflow-x-auto overflow-y-auto max-h-[400px]">
+        <table className="table w-full text-right text-sm whitespace-nowrap min-w-[500px]">
+          <thead className="sticky top-0 z-10">
             <tr>
-              <th className="px-6 py-4">الاسم</th>
-              <th className="px-6 py-4 border-r border-slate-100">الحالة</th>
-              <th className="px-6 py-4 border-r border-slate-100 text-center">إجراءات</th>
+              <th>الاسم</th>
+              <th>الحالة</th>
+              <th className="text-center">إجراءات</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100">
-            {data.length === 0 ? <tr><td colSpan={3} className="text-center py-12 text-slate-500">لا يوجد بيانات مسجلة.</td></tr> :
+          <tbody>
+            {data.length === 0 ? <tr><td colSpan={3} className="text-center py-12 text-[var(--grey-400)]">لا يوجد بيانات مسجلة.</td></tr> :
               data.map(item => (
-              <tr key={item.id} className="hover:bg-slate-50/50">
-                <td className="px-6 py-4 font-medium text-slate-800">{item.name}</td>
-                <td className="px-6 py-4 border-r border-slate-50">
-                  <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold
-                    ${item.isActive ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700'}`}>
-                    {item.isActive ? <CheckCircle2 className="w-3.5 h-3.5"/> : <XCircle className="w-3.5 h-3.5"/>}
+              <tr key={item.id} className="h-[52px]">
+                <td className="font-medium text-[var(--primary-500)]">{item.name}</td>
+                <td>
+                  <span className={`badge
+                    ${item.isActive ? 'badge-success' : 'badge-danger'}`}>
                     {item.isActive ? 'نشط' : 'غير نشط'}
                   </span>
                 </td>
-                <td className="px-6 py-4 border-r border-slate-50 text-center">
-                  <button onClick={() => handleDeleteEntity(type, item.id)} className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
-                    <Trash2 className="w-4 h-4"/>
+                <td className="text-center">
+                  <button onClick={() => handleDeleteEntity(type, item.id)} className="p-2 text-[var(--grey-400)] hover:text-[var(--alert-danger-500)] transition-colors rounded-md hover:bg-[var(--alert-danger-50)]" title="حذف">
+                    <Trash2 className="w-[18px] h-[18px]"/>
                   </button>
                 </td>
               </tr>
@@ -104,28 +103,28 @@ export default function Settings() {
   );
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in duration-500">
-      <div className="flex flex-col mb-8 gap-2">
-        <h2 className="text-3xl font-extrabold text-slate-800 tracking-tight">إعدادات النظام</h2>
-        <p className="text-slate-500">إدارة القوائم المنسدلة والتصنيفات المستخدمة في النظام.</p>
+    <div className="max-w-4xl mx-auto space-y-6 animate-in fade-in duration-500 pb-10">
+      <div>
+        <h2 className="h4 text-[var(--secondary-500)] tracking-tight">إعدادات النظام</h2>
+        <p className="body-4 text-[var(--grey-500)] mt-1">إدارة القوائم المنسدلة والتصنيفات المستخدمة في النظام.</p>
       </div>
       
-      <div className="flex gap-2 p-1 bg-slate-200/50 rounded-xl w-fit">
+      <div className="flex flex-wrap gap-2 animate-in fade-in">
         <button 
           onClick={() => setActiveTab('types')}
-          className={`flex items-center gap-2 px-6 py-2.5 rounded-lg font-medium transition-all text-sm ${activeTab === 'types' ? 'bg-white text-blue-700 shadow-sm' : 'text-slate-600 hover:text-slate-900'}`}
+          className={`flex items-center gap-2 px-5 py-2.5 rounded-md font-medium transition-all text-sm border ${activeTab === 'types' ? 'bg-[var(--primary-500)] text-[var(--white)] shadow-md border-[var(--primary-600)]' : 'bg-[var(--white)] text-[var(--secondary-500)] hover:bg-[var(--bg-tertiary)] border-[var(--grey-200)]'}`}
         >
           <LayoutGrid className="w-4 h-4" /> أنواع المساعدات
         </button>
         <button 
           onClick={() => setActiveTab('sources')}
-          className={`flex items-center gap-2 px-6 py-2.5 rounded-lg font-medium transition-all text-sm ${activeTab === 'sources' ? 'bg-white text-blue-700 shadow-sm' : 'text-slate-600 hover:text-slate-900'}`}
+          className={`flex items-center gap-2 px-5 py-2.5 rounded-md font-medium transition-all text-sm border ${activeTab === 'sources' ? 'bg-[var(--primary-500)] text-[var(--white)] shadow-md border-[var(--primary-600)]' : 'bg-[var(--white)] text-[var(--secondary-500)] hover:bg-[var(--bg-tertiary)] border-[var(--grey-200)]'}`}
         >
           <Building className="w-4 h-4" /> الجهات المانحة
         </button>
         <button 
           onClick={() => setActiveTab('assignees')}
-          className={`flex items-center gap-2 px-6 py-2.5 rounded-lg font-medium transition-all text-sm ${activeTab === 'assignees' ? 'bg-white text-blue-700 shadow-sm' : 'text-slate-600 hover:text-slate-900'}`}
+          className={`flex items-center gap-2 px-5 py-2.5 rounded-md font-medium transition-all text-sm border ${activeTab === 'assignees' ? 'bg-[var(--primary-500)] text-[var(--white)] shadow-md border-[var(--primary-600)]' : 'bg-[var(--white)] text-[var(--secondary-500)] hover:bg-[var(--bg-tertiary)] border-[var(--grey-200)]'}`}
         >
           <UserCircle className="w-4 h-4" /> المكلفين
         </button>
@@ -138,13 +137,13 @@ export default function Settings() {
       </div>
 
       {isAddModalOpen && (
-        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-3xl p-8 w-full max-w-md shadow-2xl relative animate-in zoom-in-95 duration-200">
-            <button onClick={() => setIsAddModalOpen(false)} className="absolute top-6 left-6 p-2 text-slate-400 hover:text-slate-800 hover:bg-slate-100 rounded-full transition-colors"><X className="w-5 h-5"/></button>
-            <h3 className="text-xl font-extrabold text-slate-800 mb-6">إضافة جديد</h3>
+        <div className="fixed inset-0 bg-[var(--secondary-500)]/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="card w-full max-w-md relative animate-in zoom-in-95 duration-200">
+            <button onClick={() => setIsAddModalOpen(false)} className="absolute top-4 left-4 p-2 text-[var(--grey-400)] hover:text-[var(--secondary-500)] hover:bg-[var(--bg-tertiary)] rounded-full transition-colors"><X className="w-5 h-5"/></button>
+            <h3 className="h6 text-[var(--secondary-500)] mb-6">إضافة جديد</h3>
             <form onSubmit={confirmAddEntity} className="space-y-4">
-              <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-2">
+              <div className="form-field">
+                <label className="form-label mb-2">
                   {addType === 'type' && 'اسم نوع المساعدة'}
                   {addType === 'source' && 'اسم المصدر (الجهة المانحة)'}
                   {addType === 'assignee' && 'اسم المكلف'}
@@ -154,15 +153,15 @@ export default function Settings() {
                   type="text" 
                   value={newName}
                   onChange={e => setNewName(e.target.value)}
-                  className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
+                  className="form-input h-[42px] px-3 w-full"
                   required
                 />
               </div>
               <div className="flex gap-3 pt-4">
-                <button type="submit" disabled={isSubmitting} className="flex-1 py-2.5 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition-colors shadow-sm disabled:opacity-75 flex justify-center items-center">
+                <button type="submit" disabled={isSubmitting} className="btn btn-primary flex-1 h-[42px]">
                   {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : 'حفظ'}
                 </button>
-                <button type="button" onClick={() => setIsAddModalOpen(false)} className="flex-1 py-2.5 bg-slate-100 text-slate-600 rounded-xl font-bold hover:bg-slate-200 transition-colors">إلغاء</button>
+                <button type="button" onClick={() => setIsAddModalOpen(false)} className="btn btn-outline flex-1 h-[42px]">إلغاء</button>
               </div>
             </form>
           </div>
