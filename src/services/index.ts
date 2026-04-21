@@ -1,29 +1,34 @@
 import axios from 'axios';
-import { Family, FamilyMember, Project, FamilyProject, AssistanceType, Source, Assignee } from '../models/types';
+import type { Family, FamilyMember, Project, FamilyProject, AssistanceType, Source, Assignee } from '../models/types';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5122/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
+  headers: { 'Content-Type': 'application/json' },
 });
 
-// Helper function to extract arrays from different API wrapper formats (like Laravel's { data: [...] } or simple JSON arrays)
-function extractArray(data: any): any[] {
-  if (Array.isArray(data)) return data;
-  if (data && Array.isArray(data.data)) return data.data;
-  if (data && Array.isArray(data.items)) return data.items;
-  return [];
-}
+// Attach JWT token to every request
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('auth_token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 
-// Helper function to extract a single object
-function extractObject(data: any): any {
-  if (typeof data === 'string') return undefined; // Probably fetched an HTML error page
-  if (data && data.data && typeof data.data === 'object' && !Array.isArray(data.data)) return data.data;
-  return data;
-}
+// Handle 401 globally — clear session and redirect to login
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem('auth_token');
+      localStorage.removeItem('auth_user');
+      window.location.href = '/';
+    }
+    return Promise.reject(error);
+  }
+);
 
 /**
  * خدمة بيانات العائلات (Families Data Service)
@@ -31,30 +36,28 @@ function extractObject(data: any): any {
  */
 export const familiesService = {
   async getAll(): Promise<Family[]> {
-    try {
-      const response = await api.get('/families');
-      return extractArray(response.data);
-    } catch { return []; }
+    const res = await api.get('/families');
+    return res.data;
   },
   async getById(id: number): Promise<Family | undefined> {
     try {
-      const response = await api.get(`/families/${id}`);
-      return extractObject(response.data);
+      const res = await api.get(`/families/${id}`);
+      return res.data;
     } catch { return undefined; }
   },
   async getByIdentityNumber(idNumber: string): Promise<Family | undefined> {
     try {
-      const response = await api.get(`/families/search?identityNumber=${idNumber}`);
-      return extractObject(response.data);
+      const res = await api.get('/families/search', { params: { identityNumber: idNumber } });
+      return res.data;
     } catch { return undefined; }
   },
   async add(family: Omit<Family, 'id' | 'memberCount'>): Promise<Family> {
-    const response = await api.post('/families', family);
-    return extractObject(response.data);
+    const res = await api.post('/families', family);
+    return res.data;
   },
   async update(id: number, data: Partial<Family>): Promise<Family | undefined> {
-    const response = await api.put(`/families/${id}`, data);
-    return extractObject(response.data);
+    const res = await api.put(`/families/${id}`, data);
+    return res.data;
   },
   async delete(id: number): Promise<boolean> {
     await api.delete(`/families/${id}`);
@@ -64,22 +67,24 @@ export const familiesService = {
 
 /**
  * خدمة بيانات أفراد العائلة (Family Members Data Service)
- * Endpoint: /api/members أو /api/families/:id/members
+ * Endpoint: /api/families/:id/members  |  /api/members/:id
  */
 export const familyMembersService = {
+  async getAll(): Promise<FamilyMember[]> {
+    const res = await api.get('/members');
+    return res.data;
+  },
   async getByFamilyId(familyId: number): Promise<FamilyMember[]> {
-    try {
-      const response = await api.get(`/families/${familyId}/members`);
-      return extractArray(response.data);
-    } catch { return []; }
+    const res = await api.get(`/families/${familyId}/members`);
+    return res.data;
   },
   async add(member: Omit<FamilyMember, 'id'>): Promise<FamilyMember> {
-    const response = await api.post(`/families/${member.familyId}/members`, member);
-    return extractObject(response.data);
+    const res = await api.post(`/families/${member.familyId}/members`, member);
+    return res.data;
   },
   async update(id: number, data: Partial<FamilyMember>): Promise<FamilyMember | undefined> {
-    const response = await api.put(`/members/${id}`, data);
-    return extractObject(response.data);
+    const res = await api.put(`/members/${id}`, data);
+    return res.data;
   },
   async delete(id: number): Promise<boolean> {
     await api.delete(`/members/${id}`);
@@ -93,24 +98,22 @@ export const familyMembersService = {
  */
 export const projectsService = {
   async getAll(): Promise<Project[]> {
-    try {
-      const response = await api.get('/projects');
-      return extractArray(response.data);
-    } catch { return []; }
+    const res = await api.get('/projects');
+    return res.data;
   },
   async getById(id: number): Promise<Project | undefined> {
     try {
-      const response = await api.get(`/projects/${id}`);
-      return extractObject(response.data);
+      const res = await api.get(`/projects/${id}`);
+      return res.data;
     } catch { return undefined; }
   },
   async add(project: Omit<Project, 'id'>): Promise<Project> {
-    const response = await api.post('/projects', project);
-    return extractObject(response.data);
+    const res = await api.post('/projects', project);
+    return res.data;
   },
   async update(id: number, data: Partial<Project>): Promise<Project | undefined> {
-    const response = await api.put(`/projects/${id}`);
-    return extractObject(response.data);
+    const res = await api.put(`/projects/${id}`, data);
+    return res.data;
   },
   async delete(id: number): Promise<boolean> {
     await api.delete(`/projects/${id}`);
@@ -119,35 +122,29 @@ export const projectsService = {
 };
 
 /**
- * خدمة تخصيص المساعدات وربط العائلات بالمشاريع (Allocations Data Service)
+ * خدمة تخصيص المساعدات (Allocations Data Service)
  * Endpoint: /api/allocations
  */
 export const familyProjectService = {
   async getAll(): Promise<FamilyProject[]> {
-    try {
-      const response = await api.get('/allocations');
-      return extractArray(response.data);
-    } catch { return []; }
+    const res = await api.get('/allocations');
+    return res.data;
   },
   async getByFamilyId(familyId: number): Promise<FamilyProject[]> {
-    try {
-      const response = await api.get(`/families/${familyId}/allocations`);
-      return extractArray(response.data);
-    } catch { return []; }
+    const res = await api.get(`/families/${familyId}/allocations`);
+    return res.data;
   },
   async getByProjectId(projectId: number): Promise<FamilyProject[]> {
-    try {
-      const response = await api.get(`/projects/${projectId}/allocations`);
-      return extractArray(response.data);
-    } catch { return []; }
+    const res = await api.get(`/projects/${projectId}/allocations`);
+    return res.data;
   },
   async add(data: Omit<FamilyProject, 'id'>): Promise<FamilyProject> {
-    const response = await api.post('/allocations', data);
-    return extractObject(response.data);
+    const res = await api.post('/allocations', data);
+    return res.data;
   },
   async update(id: number, data: Partial<FamilyProject>): Promise<FamilyProject | undefined> {
-    const response = await api.put(`/allocations/${id}`, data);
-    return extractObject(response.data);
+    const res = await api.put(`/allocations/${id}`, data);
+    return res.data;
   },
   async delete(id: number): Promise<boolean> {
     await api.delete(`/allocations/${id}`);
@@ -157,76 +154,69 @@ export const familyProjectService = {
 
 /**
  * خدمة بيانات أنواع المساعدات (Assistance Types Lookup)
- * Endpoint: /api/settings/assistance-types
+ * Endpoint: /api/assistance-types
  */
 export const assistanceTypesService = {
   async getAll(): Promise<AssistanceType[]> {
-    try {
-      const response = await api.get('/settings/assistance-types');
-      return extractArray(response.data);
-    } catch { return []; }
+    const res = await api.get('/assistance-types');
+    return res.data;
   },
   async add(data: Omit<AssistanceType, 'id'>): Promise<AssistanceType> {
-    const response = await api.post('/settings/assistance-types', data);
-    return extractObject(response.data);
+    const res = await api.post('/assistance-types', data);
+    return res.data;
   },
   async update(id: number, data: Partial<AssistanceType>): Promise<AssistanceType | undefined> {
-    const response = await api.put(`/settings/assistance-types/${id}`, data);
-    return extractObject(response.data);
+    const res = await api.put(`/assistance-types/${id}`, data);
+    return res.data;
   },
   async delete(id: number): Promise<boolean> {
-    await api.delete(`/settings/assistance-types/${id}`);
+    await api.delete(`/assistance-types/${id}`);
     return true;
   }
 };
 
 /**
- * خدمة بيانات الجهات المانحة والمصادر (Sources Lookup)
- * Endpoint: /api/settings/sources
+ * خدمة بيانات الجهات المانحة (Sources Lookup)
+ * Endpoint: /api/sources
  */
 export const sourcesService = {
   async getAll(): Promise<Source[]> {
-    try {
-      const response = await api.get('/settings/sources');
-      return extractArray(response.data);
-    } catch { return []; }
+    const res = await api.get('/sources');
+    return res.data;
   },
   async add(data: Omit<Source, 'id'>): Promise<Source> {
-    const response = await api.post('/settings/sources', data);
-    return extractObject(response.data);
+    const res = await api.post('/sources', data);
+    return res.data;
   },
   async update(id: number, data: Partial<Source>): Promise<Source | undefined> {
-    const response = await api.put(`/settings/sources/${id}`, data);
-    return extractObject(response.data);
+    const res = await api.put(`/sources/${id}`, data);
+    return res.data;
   },
   async delete(id: number): Promise<boolean> {
-    await api.delete(`/settings/sources/${id}`);
+    await api.delete(`/sources/${id}`);
     return true;
   }
 };
 
 /**
- * خدمة بيانات الجهات المكلفة بالتوزيع (Assignees Lookup)
- * Endpoint: /api/settings/assignees
+ * خدمة بيانات الجهات المكلفة (Assignees Lookup)
+ * Endpoint: /api/assignees
  */
 export const assigneesService = {
   async getAll(): Promise<Assignee[]> {
-    try {
-      const response = await api.get('/settings/assignees');
-      return extractArray(response.data);
-    } catch { return []; }
+    const res = await api.get('/assignees');
+    return res.data;
   },
   async add(data: Omit<Assignee, 'id'>): Promise<Assignee> {
-    const response = await api.post('/settings/assignees', data);
-    return extractObject(response.data);
+    const res = await api.post('/assignees', data);
+    return res.data;
   },
   async update(id: number, data: Partial<Assignee>): Promise<Assignee | undefined> {
-    const response = await api.put(`/settings/assignees/${id}`, data);
-    return extractObject(response.data);
+    const res = await api.put(`/assignees/${id}`, data);
+    return res.data;
   },
   async delete(id: number): Promise<boolean> {
-    await api.delete(`/settings/assignees/${id}`);
+    await api.delete(`/assignees/${id}`);
     return true;
   }
 };
-

@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5122/api';
+
 interface User {
   id: string;
   name: string;
@@ -22,7 +24,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check if user is logged in
     const storedUser = localStorage.getItem('auth_user');
     if (storedUser) {
       setUser(JSON.parse(storedUser));
@@ -31,28 +32,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const login = async (email: string, password: string) => {
-    // Mock authentication
-    return new Promise<void>((resolve, reject) => {
-      setTimeout(() => {
-        if (email === 'admin@system.com' && password === 'admin123') {
-          const loggedInUser: User = {
-            id: '1',
-            name: 'مدير النظام',
-            email: 'admin@system.com',
-            role: 'Admin'
-          };
-          setUser(loggedInUser);
-          localStorage.setItem('auth_user', JSON.stringify(loggedInUser));
-          resolve();
-        } else {
-          reject(new Error('البريد الإلكتروني أو كلمة المرور غير صحيحة'));
-        }
-      }, 800);
+    const response = await fetch(`${API_BASE_URL}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
     });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => null);
+      throw new Error(errorData?.message || 'البريد الإلكتروني أو كلمة المرور غير صحيحة');
+    }
+
+    const data = await response.json();
+    const { token, user: loggedInUser } = data as { token: string; user: User };
+
+    localStorage.setItem('auth_token', token);
+    localStorage.setItem('auth_user', JSON.stringify(loggedInUser));
+    setUser(loggedInUser);
   };
 
   const logout = () => {
     setUser(null);
+    localStorage.removeItem('auth_token');
     localStorage.removeItem('auth_user');
   };
 
