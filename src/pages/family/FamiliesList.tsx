@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { familiesService, familyProjectService, assigneesService } from '../../services';
+import { familiesService, familyProjectService, assigneesService, importService } from '../../services';
 import { Family, Assignee } from '../../models/types';
-import { Search, Plus, Download, Eye, Edit, Trash2, Filter, X, Check, FileSpreadsheet } from 'lucide-react';
+import { Search, Plus, Download, Eye, Edit, Trash2, Filter, X, Check, FileSpreadsheet, Upload, Loader2, AlertTriangle } from 'lucide-react';
 import { exportToExcel } from '../../utils/export';
 
 export default function FamiliesList() {
@@ -21,6 +21,13 @@ export default function FamiliesList() {
   // Export Modal states
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [exportFileName, setExportFileName] = useState('');
+
+  // Import Modal states
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+  const [importFile, setImportFile] = useState<File | null>(null);
+  const [isImporting, setIsImporting] = useState(false);
+  const [importResult, setImportResult] = useState<import('../../services').ImportResult | null>(null);
+  const [importError, setImportError] = useState<string | null>(null);
 
   useEffect(() => {
     loadData();
@@ -84,6 +91,22 @@ export default function FamiliesList() {
     setIsExportModalOpen(true);
   };
 
+  const handleImport = async () => {
+    if (!importFile) return;
+    setIsImporting(true);
+    setImportError(null);
+    setImportResult(null);
+    try {
+      const result = await importService.importExcel(importFile);
+      setImportResult(result);
+      await loadData();
+    } catch (err: any) {
+      setImportError(err.message || 'حدث خطأ أثناء الاستيراد');
+    } finally {
+      setIsImporting(false);
+    }
+  };
+
   const performExport = () => {
     const dataToExport = filtered.map(f => ({
       'الهوية': f.headIdentityNumber,
@@ -137,6 +160,9 @@ export default function FamiliesList() {
           </div>
 
           <div className="flex gap-2 w-full sm:w-auto">
+            <button onClick={() => { setIsImportModalOpen(true); setImportResult(null); setImportError(null); setImportFile(null); }} className="btn btn-outline btn-small flex-1 sm:flex-none whitespace-nowrap">
+              <Upload className="w-4 h-4" /> استيراد
+            </button>
             <button onClick={handleOpenExportModal} className="btn btn-outline btn-small flex-1 sm:flex-none whitespace-nowrap">
               <Download className="w-4 h-4" /> تصدير
             </button>
@@ -164,6 +190,7 @@ export default function FamiliesList() {
                 <th>اسم رب الأسرة</th>
                 <th>رقم الجوال</th>
                 <th>الحالة والمكان</th>
+                <th className="text-center">عدد الأفراد</th>
                 <th>المكلف بالشؤون</th>
                 <th className="text-center">المساعدات</th>
                 <th className="text-center">إجراءات</th>
@@ -172,7 +199,7 @@ export default function FamiliesList() {
             <tbody>
               {paginatedData.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="text-center text-[var(--grey-500)] py-12 font-medium">لا توجد عائلات تطابق بحثك...</td>
+                  <td colSpan={9} className="text-center text-[var(--grey-500)] py-12 font-medium">لا توجد عائلات تطابق بحثك...</td>
                 </tr>
               ) : (
                 paginatedData.map((f, i) => (
@@ -193,6 +220,11 @@ export default function FamiliesList() {
                           <span className="badge badge-neutral text-[10px] py-0 px-2 rounded-md">{f.region || 'غير محدد'}</span>
                         </div>
                       </div>
+                    </td>
+                    <td className="text-center">
+                      <span className="inline-flex items-center justify-center min-w-[28px] h-6 px-2 rounded-full text-xs font-bold bg-[var(--primary-100)] text-[var(--primary-600)]">
+                        {f.memberCount + 1}
+                      </span>
                     </td>
                     <td>
                       {f.assigneeId ? (
@@ -301,6 +333,79 @@ export default function FamiliesList() {
                 تصدير الآن
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {isImportModalOpen && (
+        <div className="fixed inset-0 bg-[var(--secondary-500)]/40 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="card w-full max-w-md" dir="rtl">
+            <div className="card-header border-b-0 pb-0 flex justify-between items-center mb-4">
+              <h3 className="h6 flex items-center gap-2">
+                <Upload className="w-5 h-5 text-[var(--primary-500)]" />
+                استيراد من Excel
+              </h3>
+              <button onClick={() => setIsImportModalOpen(false)} className="text-[var(--grey-500)] hover:text-[var(--secondary-500)]">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {!importResult && !importError && (
+              <>
+                <div className="form-field mb-4">
+                  <label className="form-label text-[var(--secondary-500)] mb-2">اختر ملف Excel (.xlsx):</label>
+                  <input
+                    type="file"
+                    accept=".xlsx"
+                    onChange={e => setImportFile(e.target.files?.[0] || null)}
+                    className="form-input w-full text-sm"
+                  />
+                </div>
+                <p className="body-4 text-[var(--grey-500)] mb-4">
+                  يتم قراءة البيانات من الصف الرابع. الصفوف التي تحتوي "شهيد" أو "شهداء" في الحالة الاجتماعية يتم تخطيها تلقائياً.
+                </p>
+                <div className="flex justify-end gap-3">
+                  <button onClick={() => setIsImportModalOpen(false)} className="btn btn-outline">إلغاء</button>
+                  <button
+                    onClick={handleImport}
+                    disabled={!importFile || isImporting}
+                    className="btn btn-primary disabled:opacity-50"
+                  >
+                    {isImporting ? (
+                      <><Loader2 className="w-4 h-4 animate-spin" /> جاري الاستيراد...</>
+                    ) : (
+                      <><Upload className="w-4 h-4" /> استيراد</>
+                    )}
+                  </button>
+                </div>
+              </>
+            )}
+
+            {importError && (
+              <div className="alert alert-danger mb-4">
+                <AlertTriangle className="w-5 h-5 flex-shrink-0" />
+                <span>{importError}</span>
+              </div>
+            )}
+
+            {importResult && (
+              <div className="space-y-3">
+                <div className="alert alert-success">
+                  <Check className="w-5 h-5 flex-shrink-0" />
+                  <div>
+                    <p className="font-bold">تم الاستيراد بنجاح!</p>
+                    <ul className="body-4 mt-1 space-y-1">
+                      <li>العائلات المضافة: <strong>{importResult.familiesCreated}</strong></li>
+                      <li>أفراد الزوج/ة المضافة: <strong>{importResult.membersCreated}</strong></li>
+                      <li>الجهات المكلفة الجديدة: <strong>{importResult.assigneesCreated}</strong></li>
+                      {importResult.skippedMartyrs > 0 && <li>صفوف الشهداء المتخطاة: <strong>{importResult.skippedMartyrs}</strong></li>}
+                      {importResult.skippedEmptyIdentity > 0 && <li>صفوف بدون رقم هوية متخطاة: <strong>{importResult.skippedEmptyIdentity}</strong></li>}
+                    </ul>
+                  </div>
+                </div>
+                <button onClick={() => setIsImportModalOpen(false)} className="btn btn-primary w-full">إغلاق</button>
+              </div>
+            )}
           </div>
         </div>
       )}

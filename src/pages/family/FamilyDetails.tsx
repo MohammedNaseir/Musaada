@@ -124,6 +124,14 @@ export default function FamilyDetails() {
             <div className="flex items-center gap-4">
               <div className="p-2 bg-[var(--alert-success-100)] text-[var(--alert-success-500)] rounded-md"><Users className="w-5 h-5"/></div>
               <div>
+                <p className="caption font-semibold text-[var(--grey-500)]">عدد أفراد العائلة</p>
+                <p className="body-3 font-medium text-[var(--secondary-500)] mt-0.5">{family.memberCount + 1} أفراد</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-4">
+              <div className="p-2 bg-[var(--alert-success-100)] text-[var(--alert-success-500)] rounded-md"><Users className="w-5 h-5"/></div>
+              <div>
                 <p className="caption font-semibold text-[var(--grey-500)]">الجهة المكلفة</p>
                 <p className="body-3 font-medium text-[var(--secondary-500)] mt-0.5">{assignee ? assignee.name : 'غير محدد'}</p>
               </div>
@@ -142,7 +150,7 @@ export default function FamilyDetails() {
           <div className="card p-0 overflow-hidden">
             <div className="card-header border-b border-[var(--grey-200)] px-6 py-5 mb-0 pb-5">
               <h3 className="card-title">أفراد العائلة المرفقين</h3>
-              <p className="body-4 text-[var(--grey-500)] mt-1">إجمالي الأفراد (بدون رب الأسرة): {members.length}</p>
+              <p className="body-4 text-[var(--grey-500)] mt-1">إجمالي الأفراد: <strong className="text-[var(--secondary-500)]">{family.memberCount + 1}</strong> (رب الأسرة + {family.memberCount} أفراد)</p>
             </div>
             <div className="overflow-x-auto overflow-y-auto max-h-[400px]">
               <table className="table min-w-[500px]">

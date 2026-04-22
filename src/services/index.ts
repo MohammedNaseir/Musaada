@@ -220,3 +220,40 @@ export const assigneesService = {
     return true;
   }
 };
+
+/**
+ * خدمة استيراد البيانات من Excel (Excel Import Service)
+ * Endpoint: POST /api/import/import-excel
+ */
+export interface ImportResult {
+  totalRows: number;
+  skippedMartyrs: number;
+  skippedEmptyIdentity: number;
+  familiesCreated: number;
+  membersCreated: number;
+  assigneesCreated: number;
+  errors: string[];
+}
+
+export const importService = {
+  async importExcel(file: File): Promise<ImportResult> {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const token = localStorage.getItem('auth_token');
+    const response = await fetch(`${API_BASE_URL}/import/import-excel`, {
+      method: 'POST',
+      headers: {
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => null);
+      throw new Error(errorData?.message || 'فشل في استيراد الملف');
+    }
+
+    return response.json();
+  }
+};
